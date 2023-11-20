@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>QR Code Scanner | Rashhworld</title>
+    <meta name="description" content="Transform your camera into a powerful QR Code Scanner and scan with no time.">
+    
+    <meta property="og:title" content="QR Code Scanner | Rashhworld" />
+    <meta property="og:description" content="Transform your camera into a powerful QR Code Scanner and scan with no time." />
+    <meta property="og:image" content="https://bitasoft.in/assets/metaicons/android-chrome-512x512.png" />
+    <meta property="og:url" content="https://bitasoft.in/projects/qrcode/scan/" />
+
+    <link rel="canonical" href="https://bitasoft.in/projects/qrcode/scan/" />
+    <link rel="icon" type="image/png" sizes="32x32" href="https://bitasoft.in/assets/metaicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://bitasoft.in/assets/metaicons/favicon-16x16.png">
+    <link rel="shortcut icon" href="https://bitasoft.in/assets/metaicons/favicon.ico">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/autolinker@4.0.0/dist/autolinker.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h4 class="text-center text-uppercase fw-bold my-5">QR Code Scanner</h4>
+        <div class="row justify-content-center my-5">
+            <div class="col-md-6">
+                <div class="card border border-primary">
+                    <div class="card-body">
+                        <div id="reader"></div>
+                        <div id="scan-result"></div>
+                    </div>
+                </div>
+                <button id="reload" class="d-none mt-3" onclick="location.reload()">Scan Again</button>
+            </div>
+            <span class="mt-4 text-center"><a href="https://bitasoft.in/projects/qrcode/generate/" class="text-decoration-none text-success"><svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><style>svg{fill:#198754}</style><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg> <em>Go to QR code Generator</em></a></span>
+        </div>
+    </div>
+
+    <script>
+        var html5QrcodeScanner = new Html5QrcodeScanner(
+            "reader", { fps: 10, qrbox: 250 });
+
+        function onScanSuccess(decodedText, decodedResult) {
+            displayScanResult(decodedText);
+            html5QrcodeScanner.clear();
+        }
+
+        function displayScanResult(result) {
+            var scanResultElement = document.getElementById("scan-result");
+            scanResultElement.innerHTML = `
+                <h5 class="card-title"><em>Scan Result</em></h5>
+                <p class="card-text">${makeLinksClickable(result)}</p>
+            `;
+
+            document.getElementById("reload").classList.remove("d-none");
+        }
+        
+        function makeLinksClickable(text) {
+            text = text.replace(/\n/g, '<br>');
+            var linkedText = Autolinker.link(text);
+            return linkedText;
+        }
+
+        html5QrcodeScanner.render(onScanSuccess);
+
+        //default css reset
+        document.getElementById('reader').style.border = 'none';
+        document.getElementById('reader__dashboard_section_csr').style.marginBottom = '20px';
+
+        var buttons = document.querySelectorAll('button');
+        buttons.forEach(function (button) {
+            button.classList.add('btn', 'btn-outline-primary', 'rounded-0');
+        });
+
+        var span = document.querySelectorAll('span');
+        span.forEach(function (span) {
+            span.style.fontStyle = 'italic';
+            span.classList.add('text-primary', 'fw-medium');
+        });
+        // =================
+    </script>
+</body>
+
+</html>

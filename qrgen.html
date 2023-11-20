@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator | Rashhworld</title>
+    <meta name="description" content="Effortlessly generate your personalized QR codes with the advanced QR Code Generator">
+    
+    <meta property="og:title" content="QR Code Generator | Rashhworld" />
+    <meta property="og:url" content="https://bitasoft.in/projects/qrcode/generate/" />
+    <meta property="og:description" content="Effortlessly generate your personalized QR codes with the advanced QR Code Generator" />
+    <meta property="og:image" content="https://bitasoft.in/assets/metaicons/android-chrome-512x512.png" />
+
+    <link rel="canonical" href="https://bitasoft.in/projects/qrcode/generate/" />
+    <link rel="icon" type="image/png" sizes="32x32" href="https://bitasoft.in/assets/metaicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://bitasoft.in/assets/metaicons/favicon-16x16.png">
+    <link rel="shortcut icon" href="https://bitasoft.in/assets/metaicons/favicon.ico">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qr-creator@1.0.0/dist/qr-creator.min.js"></script>
+</head>
+
+<body class="position-relative">
+    <div class="container text-center my-4">
+        <div class="row justify-content-center">
+            <h4 class="mb-5 text-uppercase text-primary fw-bold">QR Code Generator</h4>
+            <div class="col-md-6">
+                <textarea class="form-control" id="inputText" placeholder="Enter your message ..."></textarea>
+                <div class="d-flex justify-content-center my-4">
+                    <canvas id="qrcode" class="border border-warning p-3"></canvas>
+                </div>
+                <p><span class="text-danger">** </span>Ask your recipient to use the link <a id="scanlink" href="https://bitasoft.in/projects/qrcode/scan/" target="_blank">qrcode/scan</a> <span onclick="copyLink()" role="button"><svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><path d="M384 336H192c-8.8 0-16-7.2-16-16V64c0-8.8 7.2-16 16-16l140.1 0L400 115.9V320c0 8.8-7.2 16-16 16zM192 384H384c35.3 0 64-28.7 64-64V115.9c0-12.7-5.1-24.9-14.1-33.9L366.1 14.1c-9-9-21.2-14.1-33.9-14.1H192c-35.3 0-64 28.7-64 64V320c0 35.3 28.7 64 64 64zM64 128c-35.3 0-64 28.7-64 64V448c0 35.3 28.7 64 64 64H256c35.3 0 64-28.7 64-64V416H272v32c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V192c0-8.8 7.2-16 16-16H96V128H64z"/></svg></span> to scan the QR code</p>
+                <button class="btn btn-primary rounded-0" onclick="downloadQRCode()">Download QR Code</button>
+                <button class="btn btn-success rounded-0" onclick="copyQRCode()">Copy QR Code</button>
+            </div>
+            <span class="mt-4"><a href="https://bitasoft.in/projects/qrcode/scan/" class="text-decoration-none text-success fw-medium"><svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><style>svg{fill:#198754}</style><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg> <em>Go to QR code scanner</em></a></span>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            updateQRCode();
+            
+            document.querySelector('#inputText').addEventListener('input', updateQRCode);
+        })();
+        
+        function updateQRCode() {
+            QrCreator.render({
+                text: document.querySelector('#inputText').value,
+                background: '#fff',
+                size: 256
+            }, document.querySelector('#qrcode'));
+        }
+
+        function downloadQRCode() {
+            const canvas = document.querySelector('#qrcode');
+            const paddedCanvas = createPaddedCanvas(canvas);
+            downloadCanvas(paddedCanvas, "qrcode.png");
+        }
+
+        function copyQRCode() {
+            const canvas = document.querySelector('#qrcode');
+            const paddedCanvas = createPaddedCanvas(canvas);
+
+            paddedCanvas.toBlob(blob => {
+                navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+            });
+            
+            alert("QR code copied successfully!");
+        }
+
+        function createPaddedCanvas(canvas) {
+            const padding = 15;
+            const paddedCanvas = document.createElement("canvas");
+            paddedCanvas.width = canvas.width + 2 * padding;
+            paddedCanvas.height = canvas.height + 2 * padding;
+
+            const ctx = paddedCanvas.getContext("2d");
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, paddedCanvas.width, paddedCanvas.height);
+            ctx.drawImage(canvas, padding, padding);
+
+            return paddedCanvas;
+        }
+
+        function downloadCanvas(canvas, filename) {
+            const downloadLink = document.createElement("a");
+            downloadLink.href = canvas.toDataURL("image/png");
+            downloadLink.download = filename;
+            downloadLink.click();
+        }
+        
+        function copyLink() {
+            var linkElement = document.getElementById("scanlink");
+            var tempInput = document.createElement("input");
+            tempInput.value = linkElement.href;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+            
+            alert("QR code scanner link copied successfully!");
+        }
+        
+        //customized link
+        var url = window.location.href,
+            index = url.indexOf("?"),
+            parameter = index !== -1 && url.substring(index + 1);
+
+        if (parameter === 'secret-message') {
+            document.querySelector('h4').textContent = "Share your Secret Message 💌";
+            document.title = "Share your Secret Message 💌 - Rashhworld";
+        }
+    </script>
+</body>
+
+</html>
